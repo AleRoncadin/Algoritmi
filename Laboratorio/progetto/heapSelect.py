@@ -89,8 +89,6 @@ def heap_select(array, k):
     # Dopo k iterazioni, il valore estratto sarà il k-esimo minimo dell'array originale.
     return element
 
-# Esempio di utilizzo:
-array = [7, 10, 4, 3, 20, 15]
-k = 3
-kth_min = heap_select(array, k)
-print(f"The {k}-th smallest element is: {kth_min}")
+a = [int(x) for x in input().split(" ") if x]
+k = int(input())
+print(heap_select(a,k))
