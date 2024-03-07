@@ -18,6 +18,19 @@ def generate_test_case(n):
     k = random.randint(1, n)  # Seleziona un valore casuale di k nell'intervallo 1 a n.
     return array, k  # Ritorna l'array e il valore di k.
 
+# Funzione per generare i casi peggiori
+def generate_worst_case_scenario(n, algorithm_name):
+    if algorithm_name == 'Median of Medians' or algorithm_name == 'Quick Select':
+        # Per questi algoritmi, un caso pessimo può essere un array già ordinato.
+        array = list(range(n))
+        k = n // 2  # Scegli un k medio per enfatizzare l'effetto.
+    else:  # 'Heap Select' o altri algoritmi potrebbero avere casi pessimi diversi.
+        # Genera un caso generico che potrebbe essere difficile per heap_select.
+        array = [random.randint(0, 1000000) for _ in range(n)]
+        array.sort(reverse=True)  # Un array ordinato al contrario può essere un caso pessimo.
+        k = 1  # Scegliere il più piccolo elemento potrebbe essere pessimo per l'heap select.
+    return array, k
+
 # Funzione per misurare il tempo di esecuzione di un algoritmo dato l'array e il valore k.
 def measure_time(algorithm, array, k):
     start = time.monotonic()  # Tempo di inizio.
@@ -56,8 +69,14 @@ def main():
                 total_time += time_spent  # Aggiorna il tempo totale.
                 iterations += 1  # Incrementa il conteggio delle iterazioni.
             avg_time = total_time / iterations  # Calcola il tempo medio di esecuzione.
-            # Stampa i risultati.
-            print(f"Algoritmo: {name}, Lunghezza n: {n}, Tempo medio di esecuzione: {avg_time:.6f} secondi")
+            
+            # Stampa i risultati nel caso medio
+            print(f"[Caso Medio] Algoritmo: {name}, Lunghezza n: {n}, Tempo medio di esecuzione: {avg_time:.6f} secondi")
+
+            # Stampa i risultati nel caso peggiore
+            array, k = generate_worst_case_scenario(n, name)
+            time_spent, _ = measure_time(algorithm, array, k)
+            print(f"[Caso Pessimo] Algoritmo: {name}, Lunghezza n: {n}, Tempo: {time_spent:.6f} secondi")
 
 # Verifica se lo script è il punto di ingresso principale e, in tal caso, esegue la funzione main().
 if __name__ == "__main__":
