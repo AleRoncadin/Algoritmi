@@ -27,9 +27,11 @@ def main():
     E = 0.001
     Tmin = R * (1/E + 1)
     
-    # Riduci il numero di lunghezze degli array testate per diminuire il tempo totale dei test.
-    A = 100  # Mantieni il valore iniziale di A
-    B = (5000 / A) ** (1/9)  # Modifica B per avere meno campioni e un massimo di 5000
+    # Stampa il valore di Tmin per il debug
+    print(f"Tmin: {Tmin}")
+
+    A = 100
+    B = (5000 / A) ** (1/9)
 
     algorithms = {
         'Heap Select': heap_select,
@@ -37,20 +39,23 @@ def main():
         'Quick Select': quickSelect
     }
 
-    # Usa solo 10 campioni invece di 100 per accelerare i test.
     for i in range(10):
         n = int(A * B ** i)
+        # Genera un singolo caso di test per ogni dimensione di n
         array, k = generate_test_case(n)
         for name, algorithm in algorithms.items():
-            # Inizializza il tempo totale e il numero di iterazioni.
+            # Stampa l'algoritmo corrente e la dimensione di n per il debug
+            print(f"\nTestando algoritmo: {name} con n = {n}")
+            
             total_time, iterations = 0, 0
-            # Genera nuovi casi di test finché il tempo totale non supera Tmin.
+            # Utilizza lo stesso caso di test per tutte le iterazioni
             while total_time < Tmin:
-                array, k = generate_test_case(n)
                 time_spent, _ = measure_time(algorithm, array, k)
                 total_time += time_spent
                 iterations += 1
-            # Calcola il tempo medio di esecuzione.
+                # Stampa il progresso attuale per il debug
+                print(f"Iterazione: {iterations}, Tempo totale attuale: {total_time:.6f} secondi")
+            
             avg_time = total_time / iterations
             print(f"Algoritmo: {name}, Lunghezza n: {n}, Tempo medio di esecuzione: {avg_time:.6f} secondi")
 
