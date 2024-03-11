@@ -1,0 +1,29 @@
+MEDIAN OF MEDIANS
+L’algoritmo “Median of Medians” è un algoritmo di selezione che trova l’elemento k-esimo in un array non ordinato in tempo lineare. La bellezza di questo algoritmo è che ha un tempo di esecuzione peggiore garantito di O(n), indipendentemente dalla distribuzione dei dati o dal valore di k.
+Tuttavia, ci sono alcuni casi in cui l’algoritmo può essere meno efficiente, anche se non supera mai O(n):
+
+- Array già ordinati: Se l’array è già ordinato (in ordine crescente o decrescente), l’algoritmo “Median of Medians” non è particolarmente 
+  efficiente perché non sfrutta questa proprietà. Altri algoritmi di selezione, come il Quickselect, possono essere più efficienti in questi casi.
+- Array con molti duplicati: Se l’array contiene molti elementi duplicati, l’algoritmo “Median of Medians” può essere meno efficiente. 
+  Questo perché l’algoritmo tratta ogni elemento come unico, quindi non sfrutta la presenza di duplicati per ridurre la dimensione del problema.
+- Valori di k estremi: Se k è molto vicino a 0 o a n (cioè, stai cercando il minimo o il massimo dell’array), l’algoritmo “Median of Medians” 
+  può essere meno efficiente rispetto ad altri algoritmi di selezione che sono ottimizzati per questi casi.
+
+HEAP SELECT
+Nell’algoritmo heap_select, il caso peggiore si verifica quando k è molto vicino a n o molto lontano da n.
+Questo perché l’algoritmo utilizza due approcci diversi a seconda del valore di k rispetto a n/2.
+
+- Se k <= n // 2, l’algoritmo costruisce un MinHeap con tutti gli elementi dell’array e poi estrae k volte. Ogni estrazione richiede un 
+  tempo logaritmico, quindi il tempo totale per questa parte è O(k log n). Il caso peggiore si verifica quando k è il più grande possibile, 
+  cioè k = n // 2, il che rende il tempo totale O(n log n).
+- Se k > n // 2, l’algoritmo mantiene un MaxHeap con i k elementi più piccoli dell’array. Per ogni elemento dell’array, l’algoritmo lo 
+  inserisce nel MaxHeap e poi, se la dimensione del heap supera k, estrae l’elemento massimo. Entrambe queste operazioni richiedono un 
+  tempo logaritmico, quindi il tempo totale per questa parte è O(n log k). Il caso peggiore si verifica quando k è il più piccolo possibile, 
+  cioè k = n, il che rende il tempo totale O(n log n).
+
+QUICK SELECT
+Il caso peggiore si verifica quando l’array è già ordinato (in ordine crescente o decrescente) o quando tutti gli elementi sono uguali. 
+In questi casi, QuickSelect diventa essenzialmente QuickSort, con un tempo di esecuzione di O(n^2).
+Nel tuo codice, il pivot viene scelto come l’ultimo elemento dell’array. Quindi, se l’array è già ordinato, il pivot sarà sempre 
+l’elemento massimo, e QuickSelect dovrà esaminare tutti gli elementi dell’array ad ogni ricorsione, portando a un tempo di esecuzione 
+di O(n^2).
