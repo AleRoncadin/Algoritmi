@@ -20,29 +20,41 @@ def generate_test_case(n):
 
 # Funzione per generare i casi peggiori
 def generate_worst_case_scenario(n, algorithm_name):
-    if algorithm_name == 'Median of Medians' or algorithm_name == 'Quick Select':
-        # Per questi algoritmi, un caso pessimo può essere un array già ordinato.
-        array = list(range(n))
-        k = n // 2  # Scegli un k medio per enfatizzare l'effetto.
-    else:  # 'Heap Select' o altri algoritmi potrebbero avere casi pessimi diversi.
-        # Genera un caso generico che potrebbe essere difficile per heap_select.
+    if algorithm_name == 'Heap Select':
+        # Caso peggiore per Heap Select
         array = [random.randint(0, 1000000) for _ in range(n)]
-        array.sort(reverse=True)  # Un array ordinato al contrario può essere un caso pessimo.
-        k = 1  # Scegliere il più piccolo elemento potrebbe essere pessimo per l'heap select.
+        array.sort(reverse=True)
+        k = (n // 2) - 1
+    elif algorithm_name == 'Median of Medians':
+        # Caso peggiore per Median of Medians
+        array = [i for i in range(n//2) for _ in range(2)]  # Array ordinato con molti duplicati
+        k = n  # Valore estremo per k
+    elif algorithm_name == 'Quick Select':
+        # Caso peggiore per Quick Select
+        array = list(range(n))
+        k = n // 2
+    else:
+        raise ValueError("Algorithm name not recognized")
     return array, k
 
 # Funzione per misurare il tempo di esecuzione di un algoritmo dato l'array e il valore k.
-def measure_time(algorithm, array, k):
-    start = time.monotonic()  # Tempo di inizio.
-    result = algorithm(array, k)  # Esegue l'algoritmo con l'array e k forniti.
-    stop = time.monotonic()  # Tempo di fine.
-    return stop - start, result  # Ritorna il tempo trascorso e il risultato dell'algoritmo.
+def measure_time(algorithm, array, k, Tmin):
+    total_time, iterations = 0, 0
+    while total_time < Tmin:
+        start = time.monotonic()  # Tempo di inizio.
+        algorithm(array, k)  # Esegue l'algoritmo con l'array e k forniti.
+        stop = time.monotonic()  # Tempo di fine.
+        time_spent = stop - start
+        total_time += time_spent
+        iterations += 1
+    avg_time = total_time / iterations
+    return avg_time
 
 # Funzione principale che esegue il benchmark degli algoritmi.
 def main():
     try:
         print("Premere CTRL+C in qualsiasi momento per uscire dal programma.")
-        
+
         R = resolution()  # Ottiene la risoluzione del clock.
         E = 0.001  # Imposta l'errore relativo massimo ammissibile.
         Tmin = R * (1/E + 1)  # Calcola il tempo minimo misurabile basato sulla risoluzione e sull'errore relativo.
@@ -64,26 +76,17 @@ def main():
             array, k = generate_test_case(n)  # Genera un caso di test.
             # Itera attraverso ciascun algoritmo nel dizionario.
             for name, algorithm in algorithms.items():
-                total_time, iterations = 0, 0  # Inizializza il tempo totale e il conteggio delle iterazioni.
-                # Continua ad eseguire l'algoritmo su nuovi casi di test finché il tempo totale è minore di Tmin.
-                while total_time < Tmin:
-                    #array, k = generate_test_case(n)  # Genera un nuovo caso di test.
-                    time_spent, _ = measure_time(algorithm, array, k)  # Misura il tempo di esecuzione.
-                    total_time += time_spent  # Aggiorna il tempo totale.
-                    iterations += 1  # Incrementa il conteggio delle iterazioni.
-                avg_time = total_time / iterations  # Calcola il tempo medio di esecuzione.
-                
-                # Stampa i risultati nel caso medio
+                avg_time = measure_time(algorithm, array, k, Tmin)
                 print(f"[Caso Medio] Algoritmo: {name}, Lunghezza n: {n}, Tempo medio di esecuzione: {avg_time:.6f} secondi")
 
+                array_worst, k_worst = generate_worst_case_scenario(n, name)
+                avg_time_worst = measure_time(algorithm, array_worst, k_worst, Tmin)
+
                 # Stampa i risultati nel caso peggiore
-                array, k = generate_worst_case_scenario(n, name)
-                time_spent, _ = measure_time(algorithm, array, k)
-                print(f"[Caso Pessimo] Algoritmo: {name}, Lunghezza n: {n}, Tempo: {time_spent:.6f} secondi")
+                print(f"[Caso Pessimo] Algoritmo: {name}, Lunghezza n: {n}, Tempo: {avg_time_worst:.6f} secondi")
     
     except KeyboardInterrupt:
         print("Uscita dal programma...")
 
-# Verifica se lo script è il punto di ingresso principale e, in tal caso, esegue la funzione main().
 if __name__ == "__main__":
     main()
