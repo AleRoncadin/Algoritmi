@@ -3,6 +3,7 @@ import random  # Per generare array e valori di k casuali.
 from heapSelect import heap_select
 from medianOfMedians import median_of_medians
 from quickSelect import quickSelect
+import matplotlib.pyplot as plt
 
 # Definisce una funzione per calcolare la risoluzione del clock di sistema.
 def resolution():
@@ -24,11 +25,11 @@ def generate_worst_case_scenario(n, algorithm_name):
         # Caso peggiore per Heap Select
         array = [random.randint(0, 1000000) for _ in range(n)]
         array.sort(reverse=True)
-        k = (n // 2) - 1
+        k = n // 2
     elif algorithm_name == 'Median of Medians':
         # Caso peggiore per Median of Medians
         array = [i for i in range(n//2) for _ in range(2)]  # Array ordinato con molti duplicati
-        k = n  # Valore estremo per k
+        k = n // 2
     elif algorithm_name == 'Quick Select':
         # Caso peggiore per Quick Select
         array = list(range(n))
@@ -70,21 +71,40 @@ def main():
             'Quick Select': quickSelect
         }
 
+        # Dizionario per memorizzare i tempi di esecuzione per ogni algoritmo
+        times = {name: {'avg': [], 'worst': []} for name in algorithms.keys()}
+
         # Ciclo per testare gli algoritmi su array di lunghezze variabili.
-        for i in range(100):
+        for i in range(10):
             n = int(A * B ** i)  # Calcola la lunghezza dell'array per l'attuale iterazione.
             array, k = generate_test_case(n)  # Genera un caso di test.
+            
             # Itera attraverso ciascun algoritmo nel dizionario.
             for name, algorithm in algorithms.items():
                 avg_time = measure_time(algorithm, array, k, Tmin)
+                times[name]['avg'].append(avg_time)
+                
+                # Stampa i risultati nel caso medio
                 print(f"[Caso Medio] Algoritmo: {name}, Lunghezza n: {n}, Tempo medio di esecuzione: {avg_time:.6f} secondi")
-
+                
                 array_worst, k_worst = generate_worst_case_scenario(n, name)
                 avg_time_worst = measure_time(algorithm, array_worst, k_worst, Tmin)
+                times[name]['worst'].append(avg_time_worst)
 
                 # Stampa i risultati nel caso peggiore
                 print(f"[Caso Pessimo] Algoritmo: {name}, Lunghezza n: {n}, Tempo: {avg_time_worst:.6f} secondi")
     
+        # Crea i grafici
+        for name in algorithms.keys():
+            plt.figure(figsize=(10, 5))
+            plt.plot(times[name]['avg'], label='Caso Medio')
+            plt.plot(times[name]['worst'], label='Caso Pessimo')
+            plt.title(name)
+            plt.xlabel('Iterazione')
+            plt.ylabel('Tempo medio di esecuzione (secondi)')
+            plt.legend()
+            plt.savefig(f'{name}_graph.png') # Salva il grafico in un file
+
     except KeyboardInterrupt:
         print("Uscita dal programma...")
 
