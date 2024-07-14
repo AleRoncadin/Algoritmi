@@ -1,0 +1,3 @@
+Caso peggiore di Median of Medians:
+- k è il minimo o il massimo, quindi al posto di k = n // 2, metto k = 1 o k = n.
+
