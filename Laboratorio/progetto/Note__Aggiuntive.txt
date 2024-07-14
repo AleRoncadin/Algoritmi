@@ -1,3 +1,14 @@
 Caso peggiore di Median of Medians:
 - k è il minimo o il massimo, quindi al posto di k = n // 2, metto k = 1 o k = n.
 
+Caso peggiore di Heap Select:
+Quando k è molto vicino a n/2: Questo è il caso in cui l'algoritmo costruisce un MinHeap con tutti gli elementi dell'array e poi estrae k volte.
+Quando k è molto vicino a n: Questo è il caso in cui l'algoritmo mantiene un MaxHeap con i k elementi più piccoli dell'array e poi estrae l'elemento massimo.
+if algorithm_name == 'Heap Select':
+        array = [random.randint(0, 1000000) for _ in range(n)]
+        array.sort(reverse=True)
+        k = n // 2  # Cerca il valore medio (caso peggiore per MinHeap)
+        # Alternativa per il caso peggiore MaxHeap
+        # k = n  # Cerca il massimo (caso peggiore per MaxHeap)
+
+Caso peggiore di Quick Select:
