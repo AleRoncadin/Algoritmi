@@ -1,0 +1,46 @@
+Si richiede di implementare un programma per la misurazione dei tempi medi di esecuzione degli algoritmi, al variare della lunghezza n dell'array e del parametro k forniti in input.
+
+- La lunghezza n dell'array deve essere compresa in un range di valori fra 100 e 100000. È necessario generare almeno 100 campioni per le possibili lunghezze n su cui fare i test, e queste ultime devono seguire una serie geometrica. A tale scopo, è possibile utilizzare un ciclo for con un indice i che varia da 0 a 99, e definire la lunghezza dell'array come funzione esponenziale di i, ad esempio ni=⌊A⋅Bi⌋, dove A e B sono costanti in virgola mobile calcolate opportunamente in modo da ottenere ni=100 quando i=0 e  ni=100000 quando i=99.
+
+- Ogni test su una lunghezza n data deve generare in modo pseudo-casuale un array di n interi, in un intervallo a scelta (es. interi compresi fra 0 e 1000000) e un parametro k∈{1,...,n}. Si noti che la complessità di alcuni algoritmi può dipendere in modo significativo dalla scelta del range di interi e dal parametro k, ed è quindi possibile immaginare test diversificati in funzione di queste variabili allo scopo di evidenziare tali dipendenze.
+
+- Opzionalmente, è possibile effettuare dei test stimando anche i tempi di esecuzione nei casi pessimi, e confrontando gli algoritmi rispetto a questi casi.
+
+La stima dei tempi di esecuzione di un algoritmo su un array di interi deve garantire un errore relativo massimo pari a 0.001. A tal fine si procede nel modo seguente:
+- Per tutte le misurazioni del tempo trascorso è necessario utilizzare un clock di sistema monotono (utilizzare, ad esempio, la funzione perf_counter() del modulo time del linguaggio Python.
+- Il primo passo consiste nello stimare la risoluzione del clock di sistema, utilizzando un ciclo while per calcolare l'intervallo minimo di tempo misurabile. A tale scopo è possibile utilizzare il seguente frammento di codice in linguaggio Python:
+import time
+...
+def resolution():
+    start = time.perf_counter()
+    while time.perf_counter() == start:
+        pass
+    stop = time.perf_counter()
+    return stop - start
+
+- Successivamente, in funzione della risoluzione stimata R e dell'errore relativo massimo ammissibile (E=0.001), si calcola il tempo minimo misurabile Tmin=R⋅(1/E+1).
+
+- Per stimare il tempo medio di esecuzione di un algoritmo su istanze dell'input di dimensione n, si utilizza un ciclo while, iterando l'esecuzione dell'algoritmo su un input di dimensione n, generato in modo pseudo-casuale, e misurando complessivamente un intervallo di tempo superiore a Tmin. La misurazione deve essere effettuata senza interrompere il clock, ovvero calcolando l'intero intervallo di tempo trascorso dall'inizio dell'iterazione fino al momento il cui il tempo misurato risulti superiore a  Tmin. Il tempo medio di esecuzione per una singola istanza di input sarà quindi ottenuto calcolando il rapporto fra il tempo totale misurato e il numero di iterazioni dell'algoritmo eseguite (questa divisione non influisce sull'errore relativo commesso). La procedura di misurazione sarà quindi simile al seguente pseudo-codice:
+
+function measure(n, min_time):
+    // n is the desired size of the array
+    // min_time is the minumum measurable time to guarantee bounded relative error
+    count = 0
+    start_time = get_time()
+    while True:
+        a = init_array(n)
+        k = init_index(n)
+        exec_selection_algorithm(a, k)
+        count = count + 1
+        end_time = get_time()
+        if end_time - start_time >= min_time
+             break
+    return (end_time - start_time) / count 
+
+- Nel caso si utilizzi il linguaggio di programmazione Python o Java, occorre prestare attenzione a non allocare ripetutamente grandi strutture dati (esempio, array o stringhe) in modo dinamico (ad esempio, con l'istruzione new). Tale pratica potrebbe esaurire in breve tempo la memoria RAM disponibile e attivare il garbage collector, creando picchi nei tempi di esecuzione misurati.
+
+- Per effettuare tutte le misurazioni con precisione ragionevole, non è necessario lasciare il computer in esecuzione per ore!: una decina di minuti (massimo un'ora) è ampiamente sufficiente a generare tutti i campioni e ad effettuare le misurazioni richieste. Nella fase di implementazione si consiglia di diminuire opportunamente i vari parametri (es. numero e range dei campioni) in modo da poter testare in pochi minuti il codice per le misurazioni.
+
+I dati raccolti devono essere presentati e discussi in una relazione in formato PDF da caricare sul server e-learning. La valutazione della relazione e del codice sorgente contribuirà in modo significativo al voto finale del progetto di laboratorio. Non è necessario inviare una relazione con molte pagine: qualche decina di pagine è largamente sufficiente a discutere gli aspetti importanti dell'implementazione e dell'analisi dei tempi di esecuzione.
+
+Si consiglia l'uso di grafici comparativi, sia in scale lineari - n vs t(n) - che doppiamente logaritmiche - log(n) vs log(t(n)).
